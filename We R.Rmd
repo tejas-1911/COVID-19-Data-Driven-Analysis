@@ -1,0 +1,81 @@
+GROUP NAME: We R
+COURSE: DSC 423
+TOPIC: COVID-19 CASES & DEATHS WORLDWIDE
+PROJECT REPORT CODE:
+---
+title: "COVID-19 CASES & DEATHS WORLDWIDE ANALYSIS"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Descriptive statistics:
+
+```{r cars}
+# Load the dataset
+    
+# Summary statistics of cases and deaths
+summary(covid_data[c("Total.Cases", "Total.Deaths")])
+
+# Distribution of cases and deaths across different countries
+by_country <- aggregate(covid_data[c("Total.Cases", "Total.Deaths")], by=list(covid_data$Country), FUN=sum)
+barplot(height=by_country$Total.Cases, names.arg=by_country$Group.1, xlab="Country", ylab="Total Cases", main="Total Cases by Country")
+barplot(height=by_country$Total.Deaths, names.arg=by_country$Group.1, xlab="Country", ylab="Total Deaths", main="Total Deaths by Country")
+```
+
+## Hypothesis testing:
+
+```{r pressure, echo=FALSE}
+# Load the dataset
+
+# Test for significant difference in the number of cases and deaths between different countries
+# Using t-test for independent samples
+usa_cases <- covid_data$Total.Cases[covid_data$Country=="USA"]
+india_cases <- covid_data$Total.Cases[covid_data$Country=="India"]
+t.test(usa_cases, india_cases)
+
+usa_deaths <- covid_data$Total.Deaths[covid_data$Country=="USA"]
+india_deaths <- covid_data$Total.Deaths[covid_data$Country=="India"]
+t.test(usa_deaths, india_deaths)
+```
+
+
+##Correlation analysis:
+
+```{r pressure, echo=FALSE}
+# Load the dataset
+
+# Correlation between number of cases and deaths in different countries
+cor(covid_data[c("Total.Cases", "Total.Deaths")])
+
+```
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+Simple linear regression:
+
+```{r pressure, echo=FALSE}
+# Load the dataset
+
+# Model relationship between cases and deaths in a single country (e.g. USA)
+usa_data <- covid_data[covid_data$Country=="USA", c("Total.Cases", "Total.Deaths")]
+model <- lm(Total.Deaths ~ Total.Cases, data=usa_data)
+summary(model)
+
+
+```
+
+##Multiple linear regression:
+
+```{r pressure, echo=FALSE}
+# Load the dataset
+
+# Model relationship between cases and deaths in multiple countries
+model <- lm(Total.Deaths ~ Total.Cases + Country, data=covid_data)
+summary(model)
+
+
+
+```
